@@ -170,6 +170,7 @@ namespace MvcBurger.Controllers
             var menu = await _context.Menuler.FindAsync(id);
             if (menu != null)
             {
+                ResimSil(menu);
                 _context.Menuler.Remove(menu);
             }
             
@@ -180,6 +181,18 @@ namespace MvcBurger.Controllers
         private bool MenuExists(int id)
         {
           return (_context.Menuler?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+        public void ResimSil(Menu menu) 
+        {
+         
+            var resmiKullananBaskaVarMi = _context.Menuler.Any(u => u.ResimAdi == menu.ResimAdi && u.Id != menu.Id);
+          
+
+            if (!resmiKullananBaskaVarMi)
+            {
+                var dosya = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Resimler", menu.ResimAdi);            
+                System.IO.File.Delete(dosya);
+            }
         }
     }
 }
