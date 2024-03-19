@@ -15,6 +15,12 @@
     <thead>
         <tr>
             <th>
+                Menü Adı
+            </th>
+            <th>
+                Ekstra Malzemeler
+            </th>
+            <th>
                 Buyukluk
             </th>
             <th>
@@ -27,43 +33,24 @@
         </tr>
     </thead>
     <tbody>
-@foreach (Siparis kullaniciSiparis in ViewBag.KullaniciSiparis) {
-        <tr>
-            <td>
-                 @kullaniciSiparis.Buyukluk
-            </td>
-            <td>
+        @foreach (Siparis kullaniciSiparis in ViewBag.KullaniciSiparis)
+        {
+            <tr>
+                <td>
+                    @kullaniciSiparis.Buyukluk
+                </td>
+                <td>
                     @kullaniciSiparis.SiparisSayisi
-            </td>
-            <td>
+                </td>
+                <td>
                     @kullaniciSiparis.ToplamFiyat
-            </td>
-            <td>
+                </td>
+                <td>
                     <a asp-action="Edit" asp-route-id="@kullaniciSiparis.Id">Edit</a> |
                     <a asp-action="Details" asp-route-id="@kullaniciSiparis.Id">Details</a> |
                     <a asp-action="Delete" asp-route-id="@kullaniciSiparis.Id">Delete</a>
-            </td>
-        </tr>
-}
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
-
-
-<form asp-action="Add">
-    <div class="form-group">
-        <select asp-items="@(new SelectList(ViewBag.Menuler,"Ad","Fiyat"))">
-
-        </select>
-
-    </div>
-
-</form>
-
-<form asp-action="Add">
-    <div class="form-group">
-        <select asp-items="@(new SelectList(ViewBag.EkstraMalzemeler,"Adi","Fiyat"))">
-        </select>
-
-    </div>
-
-</form>

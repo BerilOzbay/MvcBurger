@@ -65,20 +65,16 @@ namespace MvcBurger.Controllers
         // GET: Siparis/Create
         public IActionResult Create()
         {
+            ViewBag.Menuler1 = _context.Menuler.ToList();
+            ViewBag.EkstraMalzemeler1 = _context.EkstraMalzemeler.ToList();
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,MenuId,Buyukluk,EkstraMalzemeId,SiparisSayisi,ToplamFiyat")] Siparis siparis)
+        public async Task<IActionResult> Create(Siparis siparis)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(siparis);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(siparis);
+            return View();
         }
 
         public async Task<IActionResult> Edit(int? id)
