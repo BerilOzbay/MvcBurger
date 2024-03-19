@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -11,22 +12,36 @@ using MvcBurger.Entities;
 
 namespace MvcBurger.Controllers
 {
-    [Authorize(Roles ="Musteri")]
+    //[Authorize(Roles ="Musteri")]
     public class SiparisController : Controller
     {
         private readonly MvcBurgerContext _context;
+        private readonly UserManager<MvcBurgerUser> _userManager;
 
-        public SiparisController(MvcBurgerContext context)
+        public SiparisController(MvcBurgerContext context, UserManager<MvcBurgerUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Siparis
         public async Task<IActionResult> Index()
         {
-              return _context.Siparisler != null ? 
-                          View(await _context.Siparisler.ToListAsync()) :
-                          Problem("Entity set 'MvcBurgerContext.Siparisler'  is null.");
+            //Tüm siparisler
+            ViewBag.Menuler = await _context.Menuler.ToListAsync();
+            ViewBag.EkstraMalzemeler = await _context.EkstraMalzemeler.ToListAsync();
+
+
+            var allUsers = await _userManager.Users.Include(u => u.Siparisler).ToListAsync();
+            
+            var userId = _userManager.GetUserId(HttpContext.User);
+            //Anlık kullanıcı
+            var user = allUsers.FirstOrDefault(u => u.Id == userId);
+            ViewBag.FullName = user.Ad + " " + user.Soyad;
+            //Kullanıcının kendi siparisleri
+            ViewBag.KullaniciSiparis = user.Siparisler;
+            return View();
+            
         }
 
         // GET: Siparis/Details/5
@@ -53,9 +68,6 @@ namespace MvcBurger.Controllers
             return View();
         }
 
-        // POST: Siparis/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,MenuId,Buyukluk,EkstraMalzemeId,SiparisSayisi,ToplamFiyat")] Siparis siparis)
@@ -69,7 +81,6 @@ namespace MvcBurger.Controllers
             return View(siparis);
         }
 
-        // GET: Siparis/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Siparisler == null)
@@ -85,9 +96,6 @@ namespace MvcBurger.Controllers
             return View(siparis);
         }
 
-        // POST: Siparis/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,MenuId,Buyukluk,EkstraMalzemeId,SiparisSayisi,ToplamFiyat")] Siparis siparis)

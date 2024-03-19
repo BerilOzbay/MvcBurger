@@ -1,47 +1,69 @@
-﻿@model IEnumerable<MvcBurger.Entities.Siparis>
+﻿@using MvcBurger.Entities
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h2>Siparişler</h2>
+<h3>@ViewBag.Fullname Hoşgeldiniz</h3>
+
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Yeni Siparis</a>
 </p>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Buyukluk)
+                Buyukluk
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.SiparisSayisi)
+                Adet
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ToplamFiyat)
+                Toplam Fiyat
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+@foreach (Siparis kullaniciSiparis in ViewBag.KullaniciSiparis) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Buyukluk)
+                 @kullaniciSiparis.Buyukluk
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.SiparisSayisi)
+                    @kullaniciSiparis.SiparisSayisi
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ToplamFiyat)
+                    @kullaniciSiparis.ToplamFiyat
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    <a asp-action="Edit" asp-route-id="@kullaniciSiparis.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@kullaniciSiparis.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@kullaniciSiparis.Id">Delete</a>
             </td>
         </tr>
 }
     </tbody>
 </table>
+
+
+<form asp-action="Add">
+    <div class="form-group">
+        <select asp-items="@(new SelectList(ViewBag.Menuler,"Ad","Fiyat"))">
+
+        </select>
+
+    </div>
+
+</form>
+
+<form asp-action="Add">
+    <div class="form-group">
+        <select asp-items="@(new SelectList(ViewBag.EkstraMalzemeler,"Adi","Fiyat"))">
+        </select>
+
+    </div>
+
+</form>
