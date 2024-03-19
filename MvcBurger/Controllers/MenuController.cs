@@ -54,9 +54,6 @@ namespace MvcBurger.Controllers
             return View();
         }
 
-        // POST: Menu/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(MenuViewModel menuViewModel)
@@ -100,46 +97,47 @@ namespace MvcBurger.Controllers
             }
 
             var menu = await _context.Menuler.FindAsync(id);
+            TempData["id"] = menu.Id;
             if (menu == null)
             {
                 return NotFound();
             }
-            return View(menu);
+
+            MenuViewModel menuViewModel = new MenuViewModel();
+            menuViewModel.Ad = menu.Ad;
+            menuViewModel.Fiyat = menu.Fiyat;
+
+            return View(menuViewModel);
         }
 
-        // POST: Menu/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Ad,Fiyat,ResimAdi")] Menu menu)
+        public async Task<IActionResult> Edit(MenuViewModel menuViewModel)
         {
-            if (id != menu.Id)
+            var guncellenecekMenu = _context.Menuler.FirstOrDefault(m => m.Id == (int)TempData["id"]);
+            if (menuViewModel.ResimAdi != null)
             {
-                return NotFound();
-            }
+                var dosyaAdi = menuViewModel.ResimAdi.FileName;
+                var konum = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Resimler", dosyaAdi);
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(menu);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!MenuExists(menu.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                //Ekleme için akış ortamı oluşturalım
+                var akisOrtami = new FileStream(konum, FileMode.Create);
+
+                //Resmi kaydet
+                menuViewModel.ResimAdi.CopyTo(akisOrtami);
+
+                //ortamı kapat
+                akisOrtami.Close();
+
+                guncellenecekMenu.ResimAdi = dosyaAdi;
+
             }
-            return View(menu);
+            guncellenecekMenu.Ad = menuViewModel.Ad;
+            guncellenecekMenu.Fiyat = menuViewModel.Fiyat;
+
+            _context.Menuler.Update(guncellenecekMenu);
+            _context.SaveChanges();
+            return RedirectToAction("Index");
         }
 
         // GET: Menu/Delete/5

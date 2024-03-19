@@ -21,7 +21,7 @@ namespace MvcBurger.Controllers
             _context = context;
         }
 
-        // GET: EkstraMalzeme
+        //EkstraMalzeme Listeleme
         public async Task<IActionResult> Index()
         {
               return _context.EkstraMalzemeler != null ? 
@@ -47,18 +47,15 @@ namespace MvcBurger.Controllers
             return View(ekstraMalzeme);
         }
 
-        // GET: EkstraMalzeme/Create
+        [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: EkstraMalzeme/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Adi,Fiyat")] EkstraMalzeme ekstraMalzeme)
+        public async Task<IActionResult> Create([Bind("Adi,Fiyat")] EkstraMalzeme ekstraMalzeme)
         {
             if (ModelState.IsValid)
             {
@@ -69,7 +66,7 @@ namespace MvcBurger.Controllers
             return View(ekstraMalzeme);
         }
 
-        // GET: EkstraMalzeme/Edit/5
+        [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.EkstraMalzemeler == null)
@@ -85,9 +82,6 @@ namespace MvcBurger.Controllers
             return View(ekstraMalzeme);
         }
 
-        // POST: EkstraMalzeme/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Adi,Fiyat")] EkstraMalzeme ekstraMalzeme)
