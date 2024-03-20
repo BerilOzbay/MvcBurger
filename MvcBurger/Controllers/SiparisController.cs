@@ -102,9 +102,12 @@ namespace MvcBurger.Controllers
 
             return RedirectToAction("Index");
         }
-
-        public async Task<IActionResult> Edit(int? id)
+        [HttpGet]
+        public async Task<IActionResult> Update(int? id)
         {
+            ViewBag.Menuler2 = _context.Menuler.ToList();
+            ViewBag.EkstraMalzemeler2 = _context.EkstraMalzemeler.ToList();
+
             if (id == null || _context.Siparisler == null)
             {
                 return NotFound();
@@ -120,34 +123,48 @@ namespace MvcBurger.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,MenuId,Buyukluk,EkstraMalzemeId,SiparisSayisi,ToplamFiyat")] Siparis siparis)
+        public async Task<IActionResult> Update(int siparisId, int menuId, int extraId, string size, int quantity)
         {
-            if (id != siparis.Id)
+            var allUsers = await _userManager.Users
+                .Include(u => u.Siparisler).ThenInclude(s => s.Menuler)
+                .Include(u => u.Siparisler).ThenInclude(s => s.EkstraMalzemeler)
+                .ToListAsync();
+
+            List<Menu> secilenMenuler = new List<Menu>();
+            List<EkstraMalzeme> secilenEkstraMalzemeler = new List<EkstraMalzeme>();
+ 
+            var userId = _userManager.GetUserId(HttpContext.User);
+            // Anlık kullanıcı
+            var user = allUsers.FirstOrDefault(u => u.Id == userId);
+
+            var siparis = user.Siparisler.FirstOrDefault(s => s.Id == siparisId);
+
+            if (siparis == null)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(siparis);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!SiparisExists(siparis.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(siparis);
+            var selectedMenu = _context.Menuler.FirstOrDefault(m => m.Id == menuId);
+            secilenMenuler.Add(selectedMenu);
+
+            var selectedExtra = _context.EkstraMalzemeler.FirstOrDefault(e => e.Id == extraId);
+            secilenEkstraMalzemeler.Add(selectedExtra);
+
+            // Yeni menü ve ekstra malzemeleri ekle
+            siparis.Menuler = secilenMenuler;
+            siparis.EkstraMalzemeler = secilenEkstraMalzemeler;
+
+            // Yeni boyut ve miktarı ayarla
+            siparis.Buyukluk = (Buyukluk)Enum.Parse(typeof(Buyukluk), size);
+            siparis.SiparisSayisi = quantity;
+
+            // Yeni toplam fiyatı hesapla ve ayarla
+            siparis.ToplamFiyat = SiparisToplamHesapla(siparis);
+
+            // Kullanıcıyı güncelle
+            await _userManager.UpdateAsync(user);
+
+            return RedirectToAction("Index");
         }
 
         // GET: Siparis/Delete/5
@@ -173,11 +190,22 @@ namespace MvcBurger.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+        
+
+            List<Menu> secilenMenuler = new List<Menu>();
+            List<EkstraMalzeme> secilenEkstraMalzemeler = new List<EkstraMalzeme>();
+
+            var userId = _userManager.GetUserId(HttpContext.User);
+            // Anlık kullanıcı
+            
+
+            var siparis = _context.Siparisler.Include(s => s.Menuler).Include(e => e.EkstraMalzemeler).FirstOrDefault(s => s.Id == id);
+
             if (_context.Siparisler == null)
             {
                 return Problem("Entity set 'MvcBurgerContext.Siparisler'  is null.");
             }
-            var siparis = await _context.Siparisler.FindAsync(id);
+
             if (siparis != null)
             {
                 _context.Siparisler.Remove(siparis);
