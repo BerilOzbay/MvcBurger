@@ -5,7 +5,7 @@
 }
 
 <h2>Siparişler</h2>
-<h3>@ViewBag.Fullname Hoşgeldiniz</h3>
+<h3>@ViewBag.Fullname Hoşgeldiniz</h3>    
 
 
 <p>
@@ -37,6 +37,20 @@
         {
             <tr>
                 <td>
+                    @foreach (var menu in kullaniciSiparis.Menuler)
+                    {
+                        @menu.Ad
+                        <br />
+                    }
+                </td>
+                <td>
+                    @foreach (var ekstraMalzeme in kullaniciSiparis.EkstraMalzemeler)
+                    {
+                        @ekstraMalzeme.Adi
+                        <br />
+                    }
+                </td>
+                <td>
                     @kullaniciSiparis.Buyukluk
                 </td>
                 <td>
@@ -46,9 +60,10 @@
                     @kullaniciSiparis.ToplamFiyat
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@kullaniciSiparis.Id" class="btn btn-success">Edit</a> 
+                    <a asp-action="Update" asp-route-id="@kullaniciSiparis.Id" class="btn btn-success">Edit</a> 
                     <a asp-action="Details" asp-route-id="@kullaniciSiparis.Id" class="btn btn-warning">Details </a> 
                     <a asp-action="Delete" asp-route-id="@kullaniciSiparis.Id" class="btn btn-danger">Delete</a>
+
                 </td>
             </tr>
         }
