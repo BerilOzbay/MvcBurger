@@ -9,7 +9,7 @@
 <h4>Menu</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <form asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
@@ -27,14 +27,14 @@
                 <input asp-for="ResimAdi" type="file" />
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Edit" class="btn btn-success" />
             </div>
         </form>
     </div>
 </div>
-
+<br />
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a class="btn btn-outline-warning btn-sm" asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {
