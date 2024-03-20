@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MvcBurger.Areas.Identity.Data;
 using MvcBurger.Entities;
+using static MvcBurger.Enums.Buyuluk;
 
 namespace MvcBurger.Controllers
 {
@@ -72,9 +73,34 @@ namespace MvcBurger.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Siparis siparis)
+        public async Task<IActionResult> Create(int menuId, int extraId, string size, int quantity)
         {
-            return View();
+            var allUsers = await _userManager.Users.Include(u => u.Siparisler).ToListAsync();
+
+            var userId = _userManager.GetUserId(HttpContext.User);
+            //Anlık kullanıcı
+            var user = allUsers.FirstOrDefault(u => u.Id == userId);
+
+            var selectedMenu = _context.Menuler.FirstOrDefault(m => m.Id == menuId);
+            var selectedExtra = _context.EkstraMalzemeler.FirstOrDefault(e => e.Id == extraId);
+      
+            Siparis siparis = new Siparis()
+            {
+                Buyukluk = (Buyukluk)System.Enum.Parse(typeof(Buyukluk), size),
+                SiparisSayisi = quantity,
+                Menuler = new List<Menu>(),
+                EkstraMalzemeler = new List<EkstraMalzeme>(),
+
+
+            };
+            siparis.Menuler.Add(selectedMenu);
+            siparis.EkstraMalzemeler.Add(selectedExtra);
+            siparis.ToplamFiyat = SiparisToplamHesapla(siparis);
+            user.Siparisler.Add(siparis);
+            await _userManager.UpdateAsync(user);
+
+
+            return RedirectToAction("Index");
         }
 
         public async Task<IActionResult> Edit(int? id)
@@ -164,6 +190,43 @@ namespace MvcBurger.Controllers
         private bool SiparisExists(int id)
         {
           return (_context.Siparisler?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+        private double SiparisToplamHesapla(Siparis siparis)
+        {
+            double totalPrice = 0;
+
+            if (siparis.Menuler != null)
+            {
+                foreach (var menu in siparis.Menuler)
+                {
+                    // Menü fiyatı boyuta göre hesaplanıyor
+                    switch (siparis.Buyukluk)
+                    {
+                        case Buyukluk.Kucuk:
+                            totalPrice += menu.Fiyat * siparis.SiparisSayisi;
+                            break;
+                        case Buyukluk.Orta:
+                            totalPrice += (menu.Fiyat * siparis.SiparisSayisi) + 50;
+                            break;
+                        case Buyukluk.Buyuk:
+                            totalPrice += (menu.Fiyat * siparis.SiparisSayisi) + 100;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+
+            if (siparis.EkstraMalzemeler != null)
+            {
+                foreach (var ekstra in siparis.EkstraMalzemeler)
+                {
+                    totalPrice += ekstra.Fiyat;
+                }
+            }
+
+            return totalPrice;
         }
     }
 }
