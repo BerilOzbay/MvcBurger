@@ -11,31 +11,31 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label class="control-label">Menü</label>
-                <select class="form-select" asp-items="@(new SelectList(ViewBag.Menuler1,"Id","Ad"))" onchange="Hesapla()">
+                <select name="MenuId" class="form-select" asp-for="Menuler" asp-items="@(new SelectList(ViewBag.Menuler1,"Id","Ad"))">
+                    <option value="">Seçiniz</option>
                 </select>
-
             </div>
             <div class="form-group">
                 <label class="control-label">Ekstra Malzeme</label>
-                <select class="form-select" asp-items="@(new SelectList(ViewBag.EkstraMalzemeler1,"Id","Adi"))" onchange="Hesapla()">
+                <select name="extraId" class="form-select" asp-for="EkstraMalzemeler" asp-items="@(new SelectList(ViewBag.EkstraMalzemeler1,"Id","Adi"))">
+                    <option value="">Seçiniz</option>
                 </select>
-
             </div>
             <div class="form-group">
                 <label class="control-label">Boyut</label><br />
-                <input type="radio" asp-for="Buyukluk" value="Kucuk" onchange="Hesapla()" /> Küçük<br />
-                <input type="radio" asp-for="Buyukluk" value="Orta" onchange="Hesapla()" /> Orta<br />
-                <input type="radio" asp-for="Buyukluk" value="Buyuk" onchange="Hesapla()" /> Büyük<br />
+                <input name="size" type="radio" asp-for="Buyukluk" value="Kucuk" /> Küçük<br />
+                <input name="size" type="radio" asp-for="Buyukluk" value="Orta" /> Orta<br />
+                <input name="size"  type="radio" asp-for="Buyukluk" value="Buyuk" /> Büyük<br />
                 <span asp-validation-for="Buyukluk" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="SiparisSayisi" class="control-label"></label>
-                <input asp-for="SiparisSayisi" class="form-control" onchange="Hesapla()" />
+                <input name="quantity" asp-for="SiparisSayisi" class="form-control" />
                 <span asp-validation-for="SiparisSayisi" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="ToplamFiyat" class="control-label"></label>
-                <input readonly asp-for="ToplamFiyat" class="form-control" />
+                <input asp-for="ToplamFiyat" class="form-control" />
                 <span asp-validation-for="ToplamFiyat" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -52,16 +52,5 @@
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-
-    @if (Model != null && Model.ToplamFiyat != null)
-    {
-        <script>
-            var hesaplananToplamFiyat = @Model.ToplamFiyat;
-
-            function Hesapla() {
-                document.getElementById("ToplamFiyat").value = hesaplananToplamFiyat.toFixed(2);
-            }
-        </script>
     }
 }
