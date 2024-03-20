@@ -9,9 +9,9 @@
 
 
 <p>
-    <a asp-action="Create">Yeni Siparis</a>
+    <a asp-action="Create" class="btn btn-outline-primary">Yeni Siparis</a>
 </p>
-<table class="table">
+<table class="table table-hover">
     <thead>
         <tr>
             <th>
@@ -46,9 +46,9 @@
                     @kullaniciSiparis.ToplamFiyat
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@kullaniciSiparis.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@kullaniciSiparis.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@kullaniciSiparis.Id">Delete</a>
+                    <a asp-action="Edit" asp-route-id="@kullaniciSiparis.Id" class="btn btn-success">Edit</a> 
+                    <a asp-action="Details" asp-route-id="@kullaniciSiparis.Id" class="btn btn-warning">Details </a> 
+                    <a asp-action="Delete" asp-route-id="@kullaniciSiparis.Id" class="btn btn-danger">Delete</a>
                 </td>
             </tr>
         }

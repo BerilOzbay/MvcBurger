@@ -23,15 +23,16 @@
                 <input asp-for="Fiyat" class="form-control" />
                 <span asp-validation-for="Fiyat" class="text-danger"></span>
             </div>
+            <br />
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Edit" class="btn btn-success" />
             </div>
         </form>
     </div>
 </div>
-
+<br />
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a class="btn btn-outline-warning btn-sm" asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {
