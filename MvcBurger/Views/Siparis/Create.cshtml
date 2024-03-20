@@ -11,26 +11,26 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label class="control-label">Menü</label>
-                <select name="MenuId" class="form-select" asp-for="Menuler" asp-items="@(new SelectList(ViewBag.Menuler1,"Id","Ad"))">
+                <select name="MenuId" class="form-select" asp-for="Menuler" asp-items="@(new SelectList(ViewBag.Menuler1,"Id","Ad"))" onchange="Hesapla()">
                     <option value="">Seçiniz</option>
                 </select>
             </div>
             <div class="form-group">
                 <label class="control-label">Ekstra Malzeme</label>
-                <select name="extraId" class="form-select" asp-for="EkstraMalzemeler" asp-items="@(new SelectList(ViewBag.EkstraMalzemeler1,"Id","Adi"))">
+                <select name="extraId" class="form-select" asp-for="EkstraMalzemeler" asp-items="@(new SelectList(ViewBag.EkstraMalzemeler1,"Id","Adi"))" onchange="Hesapla()">
                     <option value="">Seçiniz</option>
                 </select>
             </div>
             <div class="form-group">
                 <label class="control-label">Boyut</label><br />
-                <input name="size" type="radio" asp-for="Buyukluk" value="Kucuk" /> Küçük<br />
-                <input name="size" type="radio" asp-for="Buyukluk" value="Orta" /> Orta<br />
-                <input name="size"  type="radio" asp-for="Buyukluk" value="Buyuk" /> Büyük<br />
+                <input onchange="Hesapla()" name="size" type="radio" asp-for="Buyukluk" value="Kucuk" /> Küçük<br />
+                <input onchange="Hesapla()" name="size" type="radio" asp-for="Buyukluk" value="Orta" /> Orta<br />
+                <input onchange="Hesapla()" name="size" type="radio" asp-for="Buyukluk" value="Buyuk" /> Büyük<br />
                 <span asp-validation-for="Buyukluk" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="SiparisSayisi" class="control-label"></label>
-                <input name="quantity" asp-for="SiparisSayisi" class="form-control" />
+                <input onchange="Hesapla()" name="quantity" asp-for="SiparisSayisi" class="form-control" />
                 <span asp-validation-for="SiparisSayisi" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -54,3 +54,35 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
+<script>
+    function Hesapla() {
+        var size = document.querySelector('input[name="size"]:checked');
+        var menuPrice = document.querySelector('select[name="MenuId"]');
+        var extraPrice = document.querySelector('select[name="extraId"]');
+        var quantity = document.querySelector('input[name="quantity"]');
+        // console.log(menuPrice,extraPrice,quantity,size)
+
+        var menuPrice = parseFloat(menuPrice.value);
+        var extraPrice = parseFloat(extraPrice.value);
+        var quantity = parseInt(quantity.value);
+        var size = size.value;
+
+        var totalPrice = 0;
+
+        switch (size) {
+            case 'Kucuk':
+                totalPrice = menuPrice * quantity;
+                break;
+            case 'Orta':
+                totalPrice = (menuPrice * quantity) + 50;
+                break;
+            case 'Buyuk':
+                totalPrice = (menuPrice * quantity) + 100;
+                break;
+            default:
+                break;
+        }
+        totalPrice += extraPrice;
+        document.querySelector('input[name="ToplamFiyat"]').value = totalPrice.toFixed(2);
+    }
+</script>

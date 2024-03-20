@@ -95,7 +95,7 @@ namespace MvcBurger.Controllers
             };
             siparis.Menuler.Add(selectedMenu);
             siparis.EkstraMalzemeler.Add(selectedExtra);
-            siparis.ToplamFiyat = SiparisToplamHesapla(siparis);
+            siparis.ToplamFiyat = siparis.ToplamFiyat;
             user.Siparisler.Add(siparis);
             await _userManager.UpdateAsync(user);
 
@@ -159,7 +159,7 @@ namespace MvcBurger.Controllers
             siparis.SiparisSayisi = quantity;
 
             // Yeni toplam fiyatı hesapla ve ayarla
-            siparis.ToplamFiyat = SiparisToplamHesapla(siparis);
+            siparis.ToplamFiyat = siparis.ToplamFiyat; 
 
             // Kullanıcıyı güncelle
             await _userManager.UpdateAsync(user);
@@ -220,41 +220,41 @@ namespace MvcBurger.Controllers
           return (_context.Siparisler?.Any(e => e.Id == id)).GetValueOrDefault();
         }
 
-        private double SiparisToplamHesapla(Siparis siparis)
-        {
-            double totalPrice = 0;
+        //private double SiparisToplamHesapla(Siparis siparis)
+        //{
+        //    double totalPrice = 0;
 
-            if (siparis.Menuler != null)
-            {
-                foreach (var menu in siparis.Menuler)
-                {
-                    // Menü fiyatı boyuta göre hesaplanıyor
-                    switch (siparis.Buyukluk)
-                    {
-                        case Buyukluk.Kucuk:
-                            totalPrice += menu.Fiyat * siparis.SiparisSayisi;
-                            break;
-                        case Buyukluk.Orta:
-                            totalPrice += (menu.Fiyat * siparis.SiparisSayisi) + 50;
-                            break;
-                        case Buyukluk.Buyuk:
-                            totalPrice += (menu.Fiyat * siparis.SiparisSayisi) + 100;
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
+        //    if (siparis.Menuler != null)
+        //    {
+        //        foreach (var menu in siparis.Menuler)
+        //        {
+        //            // Menü fiyatı boyuta göre hesaplanıyor
+        //            switch (siparis.Buyukluk)
+        //            {
+        //                case Buyukluk.Kucuk:
+        //                    totalPrice += menu.Fiyat * siparis.SiparisSayisi;
+        //                    break;
+        //                case Buyukluk.Orta:
+        //                    totalPrice += (menu.Fiyat * siparis.SiparisSayisi) + 50;
+        //                    break;
+        //                case Buyukluk.Buyuk:
+        //                    totalPrice += (menu.Fiyat * siparis.SiparisSayisi) + 100;
+        //                    break;
+        //                default:
+        //                    break;
+        //            }
+        //        }
+        //    }
 
-            if (siparis.EkstraMalzemeler != null)
-            {
-                foreach (var ekstra in siparis.EkstraMalzemeler)
-                {
-                    totalPrice += ekstra.Fiyat;
-                }
-            }
+        //    if (siparis.EkstraMalzemeler != null)
+        //    {
+        //        foreach (var ekstra in siparis.EkstraMalzemeler)
+        //        {
+        //            totalPrice += ekstra.Fiyat;
+        //        }
+        //    }
 
-            return totalPrice;
-        }
+        //    return totalPrice;
+        //}
     }
 }
