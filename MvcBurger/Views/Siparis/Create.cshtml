@@ -35,7 +35,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="ToplamFiyat" class="control-label"></label>
-                <input asp-for="ToplamFiyat" class="form-control" />
+                <input asp-for="ToplamFiyat" name="totalPrice" class="form-control" />
                 <span asp-validation-for="ToplamFiyat" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -57,32 +57,37 @@
 <script>
     function Hesapla() {
         var size = document.querySelector('input[name="size"]:checked');
-        var menuPrice = document.querySelector('select[name="MenuId"]');
-        var extraPrice = document.querySelector('select[name="extraId"]');
+        var menuId = document.querySelector('select[name="MenuId"]').value;
+        var extraId = document.querySelector('select[name="extraId"]').value;
         var quantity = document.querySelector('input[name="quantity"]');
-        // console.log(menuPrice,extraPrice,quantity,size)
 
-        var menuPrice = parseFloat(menuPrice.value);
-        var extraPrice = parseFloat(extraPrice.value);
+        var menuler = @Html.Raw(Json.Serialize(ViewBag.Menuler1));
+        var ekstraMalzemeler = @Html.Raw(Json.Serialize(ViewBag.ekstraMalzemeler1));
+
+        var menuPrice = parseFloat(menuler.find(x => x.id == menuId).fiyat);
+        var extraPrice = parseFloat(ekstraMalzemeler.find(x => x.id == extraId).fiyat);
         var quantity = parseInt(quantity.value);
         var size = size.value;
 
+        console.log(menuPrice, extraPrice, quantity, size)
         var totalPrice = 0;
 
         switch (size) {
             case 'Kucuk':
-                totalPrice = menuPrice * quantity;
+                totalPrice = (menuPrice * quantity) + (extraPrice * quantity);
                 break;
             case 'Orta':
-                totalPrice = (menuPrice * quantity) + 50;
+                totalPrice = ((menuPrice + 50) * quantity) + (extraPrice * quantity);
                 break;
             case 'Buyuk':
-                totalPrice = (menuPrice * quantity) + 100;
+                totalPrice = ((menuPrice + 100) * quantity) + (extraPrice * quantity);
                 break;
             default:
                 break;
         }
-        totalPrice += extraPrice;
-        document.querySelector('input[name="ToplamFiyat"]').value = totalPrice.toFixed(2);
+        document.querySelector('input[name="totalPrice"]').value = totalPrice;
+        console.log(document.querySelector('input[name="totalPrice"]').value);
     }
 </script>
+
+

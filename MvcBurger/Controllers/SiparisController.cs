@@ -33,7 +33,10 @@ namespace MvcBurger.Controllers
             ViewBag.EkstraMalzemeler = await _context.EkstraMalzemeler.ToListAsync();
 
 
-            var allUsers = await _userManager.Users.Include(u => u.Siparisler).ToListAsync();
+            var allUsers = await _userManager.Users
+                .Include(u => u.Siparisler).ThenInclude(s => s.Menuler)
+                .Include(u => u.Siparisler).ThenInclude(s => s.EkstraMalzemeler)
+                .ToListAsync();
             
             var userId = _userManager.GetUserId(HttpContext.User);
             //Anlık kullanıcı
@@ -73,7 +76,7 @@ namespace MvcBurger.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(int menuId, int extraId, string size, int quantity)
+        public async Task<IActionResult> Create(int menuId, int extraId, string size, int quantity, double totalPrice)
         {
             var allUsers = await _userManager.Users.Include(u => u.Siparisler).ToListAsync();
 
@@ -95,7 +98,7 @@ namespace MvcBurger.Controllers
             };
             siparis.Menuler.Add(selectedMenu);
             siparis.EkstraMalzemeler.Add(selectedExtra);
-            siparis.ToplamFiyat = siparis.ToplamFiyat;
+            siparis.ToplamFiyat = totalPrice;
             user.Siparisler.Add(siparis);
             await _userManager.UpdateAsync(user);
 
@@ -123,7 +126,7 @@ namespace MvcBurger.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Update(int siparisId, int menuId, int extraId, string size, int quantity)
+        public async Task<IActionResult> Update(int siparisId, int menuId, int extraId, string size, int quantity, double totalPrice)
         {
             var allUsers = await _userManager.Users
                 .Include(u => u.Siparisler).ThenInclude(s => s.Menuler)
@@ -159,7 +162,7 @@ namespace MvcBurger.Controllers
             siparis.SiparisSayisi = quantity;
 
             // Yeni toplam fiyatı hesapla ve ayarla
-            siparis.ToplamFiyat = siparis.ToplamFiyat; 
+            siparis.ToplamFiyat = totalPrice;
 
             // Kullanıcıyı güncelle
             await _userManager.UpdateAsync(user);

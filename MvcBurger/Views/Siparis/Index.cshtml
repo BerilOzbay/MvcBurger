@@ -37,10 +37,18 @@
         {
             <tr>
                 <td>
-                   @kullaniciSiparis.Menuler
+                    @foreach (var menu in kullaniciSiparis.Menuler)
+                    {
+                        @menu.Ad
+                        <br />
+                    }
                 </td>
                 <td>
-                    @kullaniciSiparis.EkstraMalzemeler 
+                    @foreach (var ekstraMalzeme in kullaniciSiparis.EkstraMalzemeler)
+                    {
+                        @ekstraMalzeme.Adi
+                        <br />
+                    }
                 </td>
                 <td>
                     @kullaniciSiparis.Buyukluk
