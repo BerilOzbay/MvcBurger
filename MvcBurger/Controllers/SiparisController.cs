@@ -13,7 +13,7 @@ using static MvcBurger.Enums.Buyuluk;
 
 namespace MvcBurger.Controllers
 {
-    //[Authorize(Roles ="Musteri")]
+    [Authorize(Roles = "Musteri")]
     public class SiparisController : Controller
     {
         private readonly MvcBurgerContext _context;

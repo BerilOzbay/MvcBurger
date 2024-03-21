@@ -12,7 +12,7 @@ using MvcBurger.Models;
 
 namespace MvcBurger.Controllers
 {
-   // [Authorize(Roles ="Yonetici")]
+    [Authorize(Roles = "Yonetici")]
     public class MenuController : Controller
     {
         private readonly MvcBurgerContext _context;

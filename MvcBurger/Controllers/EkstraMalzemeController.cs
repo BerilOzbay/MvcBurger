@@ -11,7 +11,7 @@ using MvcBurger.Entities;
 
 namespace MvcBurger.Controllers
 {
-    //[Authorize(Roles ="Yonetici")]
+    [Authorize(Roles = "Yonetici")]
     public class EkstraMalzemeController : Controller
     {
         private readonly MvcBurgerContext _context;
